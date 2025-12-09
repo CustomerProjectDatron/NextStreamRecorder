@@ -8,6 +8,7 @@ using String
 import System
 import Development
 import File
+import ComputerVision
 
 # TODOS
 # - Stream checker (not all machines have a needle cam)
@@ -94,6 +95,13 @@ If the record is not stopped during the this time and the program is finished th
     else
         filename = filename + ".avi"
     endif
+    
+     # create output folder
+    foldername = File::GetDirectoryName(filename)
+    if not File::FolderExists foldername=foldername
+        File::FolderCreate foldername=foldername
+    endif
+    
     filename = File::GetOsPath(filename)
     append filename to args
 
@@ -101,12 +109,6 @@ If the record is not stopped during the this time and the program is finished th
     foreach arg in args
         argsString <- argsString + " " + arg
     endforeach
-
-    # create output folder
-    foldername = File::GetDirectoryName(filename)
-    if not File::FolderExists foldername=foldername
-        File::FolderCreate foldername=foldername
-    endif
 
     if debugMode
         Development::CopyToClipboard value=argsString
@@ -175,13 +177,13 @@ program GetWebcamNames returns string[]
     return result
 endprogram
 
-function GetStreamParameter (camera:Cameras) returns string
-    axisUrl = "http://192.168.242.242/mjpg/video.mjpg?camera="
+function GetStreamParameter (camera:Cameras) returns string  
+    #axisUrl = "http://192.168.242.242/mjpg/video.mjpg?camera="
     case camera
         is Cameras.Overview
-            return "-i " + axisUrl + "1"
+            return "-i " + ComputerVision::GetCameraStreamUrl(1)
         is Cameras.Needle
-            return "-i " + axisUrl + "2"
+            return "-i " + ComputerVision::GetCameraStreamUrl(2)
         is Cameras.Webcam
             availableCameras = GetWebcamNames
             if sizeof availableCameras == 0
