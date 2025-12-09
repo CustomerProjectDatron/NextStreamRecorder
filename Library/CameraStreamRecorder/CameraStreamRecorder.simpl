@@ -181,9 +181,9 @@ function GetStreamParameter (camera:Cameras) returns string
     #axisUrl = "http://192.168.242.242/mjpg/video.mjpg?camera="
     case camera
         is Cameras.Overview
-            return "-i " + ComputerVision::GetCameraStreamUrl(1)
+            return "-i " + ComputerVision::GetCameraStreamUrl(0)
         is Cameras.Needle
-            return "-i " + ComputerVision::GetCameraStreamUrl(2)
+            return "-i " + ComputerVision::GetCameraStreamUrl(1)
         is Cameras.Webcam
             availableCameras = GetWebcamNames
             if sizeof availableCameras == 0
