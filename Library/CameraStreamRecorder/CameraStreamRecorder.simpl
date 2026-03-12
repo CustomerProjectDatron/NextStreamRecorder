@@ -6,9 +6,9 @@ using Base
 import Plugin
 using String
 import System
-import Development
-import File
 import ComputerVision
+import File
+import Development
 
 # TODOS
 # - Stream checker (not all machines have a needle cam)
@@ -48,7 +48,7 @@ If the record is not stopped during the this time and the program is finished th
     optional compress:boolean @doc:If set the result is compressed with libx264@
     ) returns number
 
-    if Development::GetExecutionType == Development::ExecutionType.Visu
+    if IsSimulation
         return 1
     endif
 
@@ -102,7 +102,8 @@ If the record is not stopped during the this time and the program is finished th
         File::FolderCreate foldername=foldername
     endif
     
-    filename = File::GetOsPath(filename)
+    # set the path in "" for whitespaces
+    filename = """" + File::GetOsPath(filename) + """"
     append filename to args
 
     argsString = ""
@@ -120,6 +121,7 @@ If the record is not stopped during the this time and the program is finished th
         programPath="ffmpeg.exe"
         arguments=argsString
     )
+     
     return handle
 endprogram
 
