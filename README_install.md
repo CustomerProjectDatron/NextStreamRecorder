@@ -26,7 +26,6 @@ It`s controlled over the `metadata.json` file in the root of the package, which 
 
 (See [NextPackageConfiguration.md](NextPackageConfiguration.md) for details on the metadata schema.)
 
-
 To install SimPL-Extension on customer machines, follow these steps:
 
 1. Run the `create_package.bat` script to create package installer.
@@ -42,5 +41,3 @@ To install SimPL-Extension on customer machines, follow these steps:
 3. Open the Next software on the target machine. Go to the folder where you copied the `nextpkg` file. Install the package by clicking the install button on it.
 
 ---
-
-

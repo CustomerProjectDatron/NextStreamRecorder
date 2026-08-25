@@ -8,7 +8,7 @@
 **/*.positions
 **/*.nextpkg
 **/*.nextpkg
-
+.agents/
 Install/
 Library-2024-12-11/**/*.*
 Logging/*.*

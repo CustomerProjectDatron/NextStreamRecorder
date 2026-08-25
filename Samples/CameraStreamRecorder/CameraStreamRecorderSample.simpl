@@ -5,17 +5,32 @@ module CameraStreamRecorderSample
 using Base
 import CameraStreamRecorder
 
+@doc: Sample entry point showing the two main use cases of the CameraStreamRecorder module:
+taking a single snapshot image and recording a video stream from each available camera.@
 export program Main
-    #CameraStreamRecorder::HelpRecording
-    record1 = CameraStreamRecorder::StartRecording filename="TestRecordOverview" compress  Overview
-    record2 = CameraStreamRecorder::StartRecording filename="TestRecordNeedle" compress  Needle
-    record3 = CameraStreamRecorder::StartRecording filename="TestRecordWebcam" compress  Webcam
-    
-    Sleep seconds = 5
-    
+    TakeImage
+    RecordStream
+endprogram
+
+@doc: Captures a single snapshot from the webcam and stores it as "TestImage.jpg" in the job folder.
+Use this when you only need one picture, e.g. for documentation or a quick visual check, instead of a full recording.@
+program TakeImage
+    CameraStreamRecorder::CaptureImage filename="TestImage" Webcam
+endprogram
+
+@doc: Records a 5 second, compressed video from the Overview camera source.
+Needle and Webcam are commented out because not every machine has these cameras installed - uncomment them only if your machine has that hardware.@
+program RecordStream
+    record1 = CameraStreamRecorder::StartRecording filename="TestRecordOverview" compress Overview
+    # not every machine has a needle camera or a webcam attached, so these are disabled by default
+    #record2 = CameraStreamRecorder::StartRecording filename="TestRecordNeedle" compress Needle
+    #record3 = CameraStreamRecorder::StartRecording filename="TestRecordWebcam" compress Webcam
+
+    Sleep seconds=5
+
     CameraStreamRecorder::StopRecording recordId=ref record1
-    CameraStreamRecorder::StopRecording recordId=ref record2
-    CameraStreamRecorder::StopRecording recordId=ref record3
+    #CameraStreamRecorder::StopRecording recordId=ref record2
+    #CameraStreamRecorder::StopRecording recordId=ref record3
 endprogram
 
 end

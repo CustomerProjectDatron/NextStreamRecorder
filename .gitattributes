@@ -1,0 +1,25 @@
+﻿# Normalize line endings for all text files by default
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Shell scripts must stay LF so they run under bash (WSL/git-bash/Linux)
+*.sh text eol=lf
+
+# DATRON simPL sources keep CRLF (matches existing tooling expectations)
+*.simpl text eol=crlf
+
+# Documentation / data
+*.md text eol=lf
+*.json text eol=lf
+
+# Binary files - do not touch, do not diff
+*.nextpkg binary
+*.exe binary
+*.dll binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary

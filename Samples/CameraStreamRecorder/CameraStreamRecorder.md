@@ -7,6 +7,7 @@ The main features are the following:
 - Connect to various types of cameras ( Overview, Needle, Webcam)
 - Record video streams and save them in different formats
 - Record multiple streams simultaneously
+- Capture a single snapshot image from a camera stream
 
 ## Usage
 
@@ -28,3 +29,18 @@ CameraStreamRecorder::StopRecording recordId=ref record1
 The file ending and format will be set automatically based on the compression settings. Non compressed _.avi and compressed _.mp4.
 
 In the end thats all you need to do to record camera streams.
+
+## Taking a single snapshot
+
+If you only need a single picture instead of a video, use `CaptureImage`. It does not need a handle or a stop call - it blocks until the picture has been taken and saved.
+
+```simpl
+# import the CameraStreamRecorder module
+import CameraStreamRecorder
+
+# take a single picture from the webcam and store it as "TestImage.jpg"
+CameraStreamRecorder::CaptureImage filename="TestImage" Webcam
+```
+
+The image is always stored as `.jpg`, the file ending is added automatically.
+

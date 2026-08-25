@@ -95,13 +95,13 @@ If the record is not stopped during the this time and the program is finished th
     else
         filename = filename + ".avi"
     endif
-    
-     # create output folder
+
+    # create output folder
     foldername = File::GetDirectoryName(filename)
     if not File::FolderExists foldername=foldername
         File::FolderCreate foldername=foldername
     endif
-    
+
     # set the path in "" for whitespaces
     filename = """" + File::GetOsPath(filename) + """"
     append filename to args
@@ -114,14 +114,13 @@ If the record is not stopped during the this time and the program is finished th
     if debugMode
         Development::CopyToClipboard value=argsString
         StatusMessage = argsString
-        Development::CopyToClipboard value=argsString
     endif
 
     handle = Plugin::PluginStart(
         programPath="ffmpeg.exe"
         arguments=argsString
     )
-     
+
     return handle
 endprogram
 
@@ -151,6 +150,74 @@ export program StopRecording (
     recordId = -1
 endprogram
 
+@doc: Takes a single snapshot from a camera stream and stores it as an image file on the filesystem.
+Unlike "StartRecording" this program blocks until the image has been captured, so there is no matching "Stop" command.@
+export program CaptureImage (
+    filename:string @doc:The filename without ending. The result is stored as .jpg@
+    optional cameraStream:Cameras @doc:Allow the selection of the camera Stream. Default:Overview camera@
+    )
+
+    if IsSimulation
+        return
+    endif
+
+    if not cameraStream hasvalue
+        cameraStream = Cameras.Overview
+    endif
+
+    args:string[] = {}
+
+    # input stream
+    append GetStreamParameter(cameraStream) to args
+
+    # grab a single frame
+    append "-frames:v 1" to args
+
+    #set loglevel
+    append "-loglevel error" to args
+
+    #set override existing file
+    append "-y" to args
+
+    #set output file
+    filename = filename + ".jpg"
+
+    # create output folder
+    foldername = File::GetDirectoryName(filename)
+    if not File::FolderExists foldername=foldername
+        File::FolderCreate foldername=foldername
+    endif
+
+    # set the path in "" for whitespaces
+    filename = """" + File::GetOsPath(filename) + """"
+    append filename to args
+
+    argsString = ""
+    foreach arg in args
+        argsString <- argsString + " " + arg
+    endforeach
+
+    if debugMode
+        Development::CopyToClipboard value=argsString
+        StatusMessage = argsString
+    endif
+
+    handle = Plugin::PluginStart(
+        programPath="ffmpeg.exe"
+        arguments=argsString
+    )
+
+    # ffmpeg exits once the single frame has been written, wait for it to finish
+    errorHandler = ""
+    pluginResultLine = Plugin::PluginReadError processId=handle errorHandler=ref errorHandler
+    while errorHandler == ""
+        if debugMode
+            StatusMessage = pluginResultLine
+        endif
+        pluginResultLine = Plugin::PluginReadError processId=handle errorHandler=ref errorHandler
+    endwhile
+endprogram
+
 program GetWebcamNames returns string[]
     argsString = "ffmpeg -list_devices true -f dshow -i dummy "
     getWebcamNamesHandle = Plugin::PluginStart(
@@ -161,7 +228,7 @@ program GetWebcamNames returns string[]
     errorHandler = ""
     result:string[] = {}
 
-    pluginResultLine = Plugin::PluginReadError processId=getWebcamNamesHandle
+    pluginResultLine = Plugin::PluginReadError processId=getWebcamNamesHandle errorHandler=ref errorHandler
     while errorHandler == ""
         if StringIndexOf(pluginResultLine, "[dshow") <> -1 and StringLastIndexOf(pluginResultLine, "(video)") <> -1
             stringStart = StringIndexOf(pluginResultLine, """") + 1
@@ -179,8 +246,8 @@ program GetWebcamNames returns string[]
     return result
 endprogram
 
-function GetStreamParameter (camera:Cameras) returns string  
-    #axisUrl = "http://192.168.242.242/mjpg/video.mjpg?camera="
+function GetStreamParameter (camera:Cameras) returns string
+        #axisUrl = "http://192.168.242.242/mjpg/video.mjpg?camera="
     case camera
         is Cameras.Overview
             return "-i " + ComputerVision::GetCameraStreamUrl(0)
